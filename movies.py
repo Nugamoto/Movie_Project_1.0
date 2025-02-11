@@ -1,71 +1,57 @@
-from functions import menu, movies, print_title, print_menu, ask_for_number, press_enter_to_continue, show_all_movies, \
-    add_movie, \
-    delete_movie, update_movie, get_average_rating, get_median_rating, get_best_rated_movie, get_worst_rated_movie, \
-    get_random_movie, find_movies, sort_movies_from_highest_to_lowest
+from functions import menu, print_title, print_menu, ask_for_number, press_enter_to_continue, show_movies, \
+    get_average_rating, get_median_rating, get_best_rated_movie, get_worst_rated_movie, \
+    get_random_movie, find_movies, sort_movies_by_rating, get_title_from_user, \
+    get_valid_rating_from_user, get_valid_year_from_user, sort_movies_by_year, ask_user_for_sequence, \
+    display_movie_stats, display_found_movies, display_random_movie
+from movie_storage import get_movies, delete_movie, add_movie, update_movie
 
 
 def main():
     print_title("My Movie Database")
-
     while True:
         print_menu(menu)
-        user_choice = ask_for_number()
-
+        user_choice = ask_for_number(menu)
+        movies = get_movies()
         if user_choice == 0:
-            print("\nBye!")
+            print("\nBye Bye!")
             break
         if user_choice == 1:
-            show_all_movies(movies)
+            show_movies(movies)
             press_enter_to_continue()
             continue
         elif user_choice == 2:
-            add_movie(movies)
-            press_enter_to_continue()
-            continue
+            new_movie_title = get_title_from_user()
+            if new_movie_title not in movies["Title"]:
+                add_movie(new_movie_title, get_valid_year_from_user(), get_valid_rating_from_user())
+                press_enter_to_continue()
+                continue
         elif user_choice == 3:
-            delete_movie(movies)
+            delete_movie(get_title_from_user())
             press_enter_to_continue()
             continue
         elif user_choice == 4:
-            update_movie(movies)
+            update_movie(get_title_from_user(), get_valid_rating_from_user())
             press_enter_to_continue()
             continue
         elif user_choice == 5:
-            average_rating = get_average_rating(movies)
-            median_rating = get_median_rating(movies)
-            best_movie = get_best_rated_movie(movies)
-            worst_movie = get_worst_rated_movie(movies)
-            print(f"\n"
-                  f"----- Stats -----"
-                  f"\n"
-                  f"Average rating: {average_rating}\n"
-                  f"Median rating : {median_rating}\n"
-                  f"Best movie    : '{best_movie[0]}', Rating: {best_movie[1]}\n"
-                  f"Worst movie   : '{worst_movie[0]}', Rating: {worst_movie[1]}"
-                  )
+            display_movie_stats(get_average_rating(movies), get_median_rating(movies), get_best_rated_movie(movies),
+                                get_worst_rated_movie(movies))
             press_enter_to_continue()
             continue
         elif user_choice == 6:
-            random_movie = get_random_movie(movies)
-            print(f"\n"
-                  f"Your movie for tonight:\n"
-                  f"'{random_movie[0]}'\nIt's rated {float(random_movie[1]["Rating"])} "
-                  f"and released {random_movie[1]["Year of release"]}.")
+            display_random_movie(get_random_movie(movies))
             press_enter_to_continue()
             continue
         elif user_choice == 7:
-            found_movies = find_movies(movies)
-            print("\n")
-            if found_movies == {}:
-                print(f"No movie found.")
-            else:
-                print(f"Found movies: ")
-                for movie, data in found_movies.items():
-                    print(f"'{movie}' | Rating: {float(data["Rating"])}")
+            display_found_movies(find_movies(movies))
             press_enter_to_continue()
             continue
         elif user_choice == 8:
-            show_all_movies(sort_movies_from_highest_to_lowest(movies))
+            show_movies(sort_movies_by_rating(movies, ask_user_for_sequence()))
+            press_enter_to_continue()
+            continue
+        elif user_choice == 9:
+            show_movies(sort_movies_by_year(movies, ask_user_for_sequence()))
             press_enter_to_continue()
             continue
 

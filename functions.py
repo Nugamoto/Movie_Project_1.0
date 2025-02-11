@@ -9,23 +9,9 @@ menu = ["Exit",
         "Stats",
         "Random movie",
         "Search movie",
-        "Movies sorted by rating"
+        "Movies sorted by rating",
+        "Movies sorted by year"
         ]
-
-movies = {
-    "Title": {
-        "The Shawshank Redemption": {"Rating": 9.5, "Year of release": 1994},
-        "Pulp Fiction": {"Rating": 8.8, "Year of release": 1994},
-        "The Room": {"Rating": 3.6, "Year of release": 2003},
-        "The Godfather": {"Rating": 9.2, "Year of release": 1972},
-        "The Godfather: Part II": {"Rating": 9.0, "Year of release": 1974},
-        "The Dark Knight": {"Rating": 9.5, "Year of release": 2008},
-        "12 Angry Men": {"Rating": 8.9, "Year of release": 1957},
-        "Everything Everywhere All At Once": {"Rating": 4, "Year of release": 2022},
-        "Forrest Gump": {"Rating": 6, "Year of release": 1994},
-        "Star Wars: Episode V": {"Rating": 5, "Year of release": 1980}
-    }
-}
 
 
 def print_title(title: str):
@@ -38,7 +24,7 @@ def print_title(title: str):
     print(f"\n********** {title} **********")
 
 
-def print_menu(menu: list):
+def print_menu(menu):
     """
     Prints a menu with numbered options.
 
@@ -51,19 +37,20 @@ def print_menu(menu: list):
     print("\n")
 
 
-def ask_for_number():
+def ask_for_number(menu):
     """
-    Prompts the user to enter a number between 0 and 8.
+    Prompts the user to enter a number between 0 and len(menu).
 
     Returns:
         int: The number entered by the user if valid.
     """
+    final_digit = len(menu) - 1
     while True:
         try:
-            number = int(input("Enter choice (0-8): "))
-            if 0 <= number <= 8:
+            number = int(input(f"Enter choice (0-{final_digit}): "))
+            if 0 <= number <= final_digit:
                 return number
-            print("The choice must be between 0 and 8. Please try again.")
+            print(f"The choice must be between 0 and {final_digit}. Please try again.")
         except ValueError:
             print("Invalid input. Please enter a number!")
 
@@ -79,9 +66,9 @@ def press_enter_to_continue() -> bool:
     return False
 
 
-def show_all_movies(movies: dict):
+def show_movies(movies):
     """
-    Displays all movies and their ratings.
+    Displays all movies, their ratings and years of release.
 
     Args:
         movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
@@ -91,7 +78,7 @@ def show_all_movies(movies: dict):
         print(f"'{title}'\n\tRating: {float(data["Rating"])} | Year: {data["Year of release"]} ")
 
 
-def add_movie(movies: dict):
+def add_movie(movies):
     """
     Adds a new movie with its rating and year of release to the collection.
 
@@ -131,7 +118,7 @@ def add_movie(movies: dict):
     return movies
 
 
-def delete_movie(movies: dict):
+def delete_movie(movies):
     """
     Deletes a movie from the collection.
 
@@ -150,7 +137,7 @@ def delete_movie(movies: dict):
     return movies
 
 
-def update_movie(movies: dict):
+def update_movie(movies):
     """
     Updates the rating of an existing movie.
 
@@ -179,48 +166,17 @@ def update_movie(movies: dict):
     return movies
 
 
-def get_average_rating(movies: dict):
-    """
-    Calculates the average rating of all movies.
-
-    Args:
-        movies (dict): A dictionary where the key "Title" maps to another dictionary
-                       containing movie names as keys and their details (including "Rating") as values.
-
-    Returns:
-        float or None: The average rating rounded to one decimal place, or None if no ratings exist.
-    """
+def get_average_rating(movies):
     ratings = [details["Rating"] for details in movies["Title"].values()]
     return round(sum(ratings) / len(ratings), 1) if ratings else None
 
 
-def get_median_rating(movies: dict):
-    """
-    Calculates the median rating of all movies.
-
-    Args:
-        movies (dict): A dictionary where the key "Title" maps to another dictionary
-                       containing movie names as keys and their details (including "Rating") as values.
-
-    Returns:
-        float or None: The median rating rounded to one decimal place, or None if no ratings exist.
-    """
+def get_median_rating(movies):
     ratings = sorted([details["Rating"] for details in movies["Title"].values()])
     return round(statistics.median(ratings), 1) if ratings else None
 
 
-def get_best_rated_movie(movies: dict):
-    """
-    Finds the highest-rated movie.
-
-    Args:
-        movies (dict): A dictionary where the key "Title" maps to another dictionary
-                       containing movie names as keys and their details (including "Rating") as values.
-
-    Returns:
-        tuple or None: A tuple containing the name and rating of the highest-rated movie,
-                       or None if no movies exist.
-    """
+def get_best_rated_movie(movies):
     best_rated_movie = None
     best_rating = 0.0
 
@@ -232,18 +188,7 @@ def get_best_rated_movie(movies: dict):
     return (best_rated_movie, best_rating) if best_rated_movie else None
 
 
-def get_worst_rated_movie(movies: dict):
-    """
-    Finds the lowest-rated movie.
-
-    Args:
-        movies (dict): A dictionary where the key "Title" maps to another dictionary
-                       containing movie names as keys and their details (including "Rating") as values.
-
-    Returns:
-        tuple or None: A tuple containing the name and rating of the lowest-rated movie,
-                       or None if no movies exist.
-    """
+def get_worst_rated_movie(movies):
     worst_rated_movie = None
     worst_rating = 10.0
 
@@ -255,48 +200,92 @@ def get_worst_rated_movie(movies: dict):
     return (worst_rated_movie, worst_rating) if worst_rated_movie else None
 
 
-def get_random_movie(movies: dict):
-    """
-    Selects a random movie from the collection.
-
-    Args:
-        movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
-
-    Returns:
-        tuple: The name and data of the randomly selected movie.
-    """
+def get_random_movie(movies):
     random_movie_name = (choice(list(movies["Title"])))
     random_movie_data = movies["Title"][random_movie_name]
     return random_movie_name, random_movie_data
 
 
-def find_movies(movies: dict):
-    """
-    Finds movies that contain a specific substring in their name.
-
-    Args:
-        movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
-
-    Returns:
-        dict: A dictionary of movies that match the search criteria.
-    """
+def find_movies(movies):
     part_of_movie_name = input("Enter part of movie name: ")
-    found_items = {}
+    found_items = {"Title": {}}
     for title, data in movies["Title"].items():
         if part_of_movie_name.lower() in title.lower():
-            found_items[title] = data
+            found_items["Title"][title] = data
     return found_items
 
 
-def sort_movies_from_highest_to_lowest(movies: dict):
-    """
-    Sorts movies by their ratings in descending order.
-
-    Args:
-        movies (dict): A dictionary containing movies as keys and their details as values.
-
-    Returns:
-        dict: A dictionary of movies sorted by ratings from highest to lowest.
-    """
-    sorted_movies = dict(sorted(movies["Title"].items(), key=lambda item: item[1]["Rating"], reverse=True))
+def sort_movies_by_rating(movies, order):
+    sorted_movies = dict(sorted(movies["Title"].items(), key=lambda item: item[1]["Rating"], reverse=order))
     return {"Title": sorted_movies}
+
+
+def get_title_from_user():
+    return input("Enter movie name: ")
+
+
+def get_valid_year_from_user():
+    while True:
+        try:
+            year = int(input("Enter year of release: "))
+            if 1000 <= year <= 9999:
+                break
+            print("Invalid year. Please enter a 4-digit year!")
+        except ValueError:
+            print("Invalid input. Please enter a valid 4-digit year!")
+    return year
+
+
+def get_valid_rating_from_user():
+    while True:
+        try:
+            rating = round(float(input("Enter new movie rating (0-10): ")), 1)
+            if 0 <= rating <= 10:
+                break
+            print(f"Rating {rating} is invalid. Please try again!")
+        except ValueError:
+            print("Invalid input. Please enter a valid number!")
+    return rating
+
+
+def sort_movies_by_year(movies, order):
+    sorted_movies = dict(sorted(movies["Title"].items(), key=lambda item: item[1]["Year of release"], reverse=order))
+    return {"Title": sorted_movies}
+
+
+def ask_user_for_sequence():
+    while True:
+        sequence = input(f"\nEnter '1' for ascending sequence.\n"
+                         f"Enter '2' for descending sequence.\n")
+        if sequence == "1":
+            return False
+        elif sequence == "2":
+            return True
+        else:
+            print(f"Bad input! Please enter '1' or '2'.")
+
+
+def display_movie_stats(average, median, best, worst):
+    print(f"\n"
+          f"----- Stats -----"
+          f"\n"
+          f"Average rating: {average}\n"
+          f"Median rating : {median}\n"
+          f"Best movie    : '{best[0]}', Rating: {best[1]}\n"
+          f"Worst movie   : '{worst[0]}', Rating: {worst[1]}"
+          )
+
+
+def display_found_movies(found_movies):
+    print("\n")
+    if found_movies["Title"] == {}:
+        print(f"No movie found.")
+    else:
+        show_movies(found_movies)
+
+
+def display_random_movie(random_movie):
+    print(f"\n"
+          f"Your movie for tonight:\n"
+          f"'{random_movie[0]}'\nIt's rated {float(random_movie[1]["Rating"])} "
+          f"and released {random_movie[1]["Year of release"]}.")
