@@ -1,16 +1,17 @@
-from functions import menu, print_title, print_menu, ask_for_number, press_enter_to_continue, show_movies, \
+from functions import menu, print_title, print_menu, ask_for_valid_number, press_enter_to_continue, show_movies, \
     get_average_rating, get_median_rating, get_best_rated_movie, get_worst_rated_movie, \
     get_random_movie, find_movies, sort_movies_by_rating, get_title_from_user, \
     get_valid_rating_from_user, get_valid_year_from_user, sort_movies_by_year, ask_user_for_sequence, \
-    display_movie_stats, display_found_movies, display_random_movie
-from movie_storage import get_movies, delete_movie, add_movie, update_movie
+    display_movie_stats, display_found_movies, display_random_movie, get_minimum_rating_from_user, \
+    get_start_year_from_user, get_end_year_from_user, filter_movies
+from movie_storage import get_movies, delete_movie, add_movie, update_movie, save_movies
 
 
 def main():
     print_title("My Movie Database")
     while True:
         print_menu(menu)
-        user_choice = ask_for_number(menu)
+        user_choice = ask_for_valid_number(menu)
         movies = get_movies()
         if user_choice == 0:
             print("\nBye Bye!")
@@ -54,6 +55,12 @@ def main():
             show_movies(sort_movies_by_year(movies, ask_user_for_sequence()))
             press_enter_to_continue()
             continue
+        elif user_choice == 10:
+            show_movies((filter_movies(movies, get_minimum_rating_from_user(), get_start_year_from_user(),
+                                       get_end_year_from_user(), )))
+            press_enter_to_continue()
+            continue
+    save_movies(movies)
 
 
 if __name__ == "__main__":

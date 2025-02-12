@@ -1,6 +1,7 @@
 import statistics
 from random import choice
 
+
 menu = ["Exit",
         "List movies",
         "Add movie",
@@ -10,7 +11,8 @@ menu = ["Exit",
         "Random movie",
         "Search movie",
         "Movies sorted by rating",
-        "Movies sorted by year"
+        "Movies sorted by year",
+        "Filter movies"
         ]
 
 
@@ -24,27 +26,27 @@ def print_title(title: str):
     print(f"\n********** {title} **********")
 
 
-def print_menu(menu):
+def print_menu(menu_list):
     """
     Prints a menu with numbered options.
 
     Args:
-        menu (list): A list of menu options.
+        menu_list (list): A list of menu options.
     """
     print("\nMenu:")
-    for number, element in enumerate(menu):
+    for number, element in enumerate(menu_list):
         print(f"{number}. {element}")
     print("\n")
 
 
-def ask_for_number(menu):
+def ask_for_valid_number(menu_list):
     """
-    Prompts the user to enter a number between 0 and len(menu).
+    Prompts the user to enter a number between 0 and len(menu_list).
 
     Returns:
         int: The number entered by the user if valid.
     """
-    final_digit = len(menu) - 1
+    final_digit = len(menu_list) - 1
     while True:
         try:
             number = int(input(f"Enter choice (0-{final_digit}): "))
@@ -55,15 +57,15 @@ def ask_for_number(menu):
             print("Invalid input. Please enter a number!")
 
 
-def press_enter_to_continue() -> bool:
+def press_enter_to_continue():
     """
     Prompts the user to press Enter to continue.
 
     Returns:
-        bool: Always returns False.
+        bool: Always returns None.
     """
     input("\nPress enter to continue: ")
-    return False
+    return None
 
 
 def show_movies(movies):
@@ -73,97 +75,12 @@ def show_movies(movies):
     Args:
         movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
     """
-    print(f"\n----- Total of {len(movies["Title"])} movies -----")
-    for title, data in movies["Title"].items():
-        print(f"'{title}'\n\tRating: {float(data["Rating"])} | Year: {data["Year of release"]} ")
-
-
-def add_movie(movies):
-    """
-    Adds a new movie with its rating and year of release to the collection.
-
-    Args:
-        movies (dict[str, dict]): A dictionary containing movies as keys and their details as values.
-
-    Returns:
-        dict: The updated dictionary with the new movie added.
-    """
-    movie = input("Enter new movie name: ")
-    if movie not in movies["Title"]:
-        while True:
-            try:
-                rating = float(input("Enter new movie rating (0-10): "))
-                if 0 <= rating <= 10:
-                    break
-                print(f"Rating {rating} is invalid. Please try again!")
-            except ValueError:
-                print("Invalid input. Please enter a valid number!")
-
-        while True:
-            try:
-                year = int(input("Enter year of release: "))
-                if 1000 <= year <= 9999:
-                    break
-                print("Invalid year. Please enter a 4-digit year!")
-            except ValueError:
-                print("Invalid input. Please enter a valid 4-digit year!")
-
-        print(
-            f"\nMovie '{movie}' (Rating: {rating}, Year: {year}) successfully added"
-        )
-        movies["Title"][movie] = {"Rating": rating, "Year of release": year}
+    if movies["Title"] == {}:
+        print("No movies found!")
     else:
-        print(f"\n'{movie}' already exists.")
-
-    return movies
-
-
-def delete_movie(movies):
-    """
-    Deletes a movie from the collection.
-
-    Args:
-        movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
-
-    Returns:
-        dict: The updated dictionary with the movie removed.
-    """
-    movie = input("Enter movie name to delete: ")
-    if movie in movies["Title"]:
-        print(f"\nMovie '{movie}' successfully deleted")
-        del movies["Title"][movie]
-    else:
-        print(f"\nMovie '{movie}' doesn't exist!")
-    return movies
-
-
-def update_movie(movies):
-    """
-    Updates the rating of an existing movie.
-
-    Args:
-        movies (dict[str, dict]): A dictionary containing movies as keys and their details as values.
-
-    Returns:
-        dict: The updated dictionary with the new rating.
-    """
-    movie = input("Enter movie name to update: ")
-    if movie not in movies["Title"]:
-        print(f"\nMovie '{movie}' doesn't exist!")
-    else:
-        while True:
-            try:
-                new_rating = float(input("Enter new movie rating (0-10): "))
-                if 0 <= new_rating <= 10:
-                    break
-                print(f"Rating {new_rating} is invalid. Please try again!")
-            except ValueError:
-                print("Invalid input. Please enter a valid number!")
-
-        print(f"\nMovie '{movie}' successfully updated")
-        movies["Title"][movie]["Rating"] = float(round(new_rating, 1))
-
-    return movies
+        print(f"\n----- Total of {len(movies["Title"])} movies -----")
+        for title, data in movies["Title"].items():
+            print(f"'{title}'\n\tRating: {float(data["Rating"])} | Year: {data["Year of release"]} ")
 
 
 def get_average_rating(movies):
@@ -289,3 +206,61 @@ def display_random_movie(random_movie):
           f"Your movie for tonight:\n"
           f"'{random_movie[0]}'\nIt's rated {float(random_movie[1]["Rating"])} "
           f"and released {random_movie[1]["Year of release"]}.")
+
+
+def get_minimum_rating_from_user():
+    while True:
+        try:
+            rating = input("Enter minimum rating (0-10) or leave blank for no minimum rating: ")
+            if rating == "":
+                return 0
+            valid_rating = round(float(rating), 1)
+            if 0 <= valid_rating <= 10:
+                break
+            print(f"Rating {valid_rating} is invalid. Please try again!")
+        except ValueError:
+            print("Invalid input. Please enter a valid number or leave blank!")
+    return valid_rating
+
+
+def get_start_year_from_user():
+    while True:
+        try:
+            year = input("Enter start year or leave blank for no start year: ")
+            if year == "":
+                return 1000
+            valid_year = int(year)
+            if 1000 <= valid_year <= 9999:
+                break
+            print(f"Year {valid_year} is invalid. Please enter a 4-digit year!")
+        except ValueError:
+            print("Invalid input. Please enter a valid 4-digit year or leave blank!")
+    return valid_year
+
+
+def get_end_year_from_user():
+    while True:
+        try:
+            year = input("Enter start year or leave blank for no start year: ")
+            if year == "":
+                return 9999
+            valid_year = int(year)
+            if 1000 <= valid_year <= 9999:
+                break
+            print(f"Year {valid_year} is invalid. Please enter a 4-digit year!")
+        except ValueError:
+            print("Invalid input. Please enter a valid 4-digit year or leave blank!")
+    return valid_year
+
+
+def filter_movies(movies, min_rating, start_year, end_year):
+    movies_by_rating = sort_movies_by_rating(movies, True)
+    filtered_movies = {"Title": {}}
+    for title, data in movies_by_rating["Title"].items():
+        if data["Rating"] >= min_rating and start_year <= data["Year of release"] <= end_year:
+            filtered_movies["Title"][title] = data
+    return filtered_movies
+
+
+
+
