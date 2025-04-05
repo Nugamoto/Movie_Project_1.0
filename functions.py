@@ -1,7 +1,6 @@
 import statistics
 from random import choice
 
-
 menu = ["Exit",
         "List movies",
         "Add movie",
@@ -93,28 +92,34 @@ def get_median_rating(movies):
     return round(statistics.median(ratings), 1) if ratings else None
 
 
-def get_best_rated_movie(movies):
-    best_rated_movie = None
+def get_best_rated_movies(movies):
+    best_rated_movies = []
     best_rating = 0.0
 
     for movie, data in movies["Title"].items():
         if data["Rating"] > best_rating:
+            best_rated_movies = [(movie, data["Rating"])]
             best_rating = data["Rating"]
-            best_rated_movie = movie
+            continue
+        if data["Rating"] == best_rating:
+            best_rated_movies.append((movie, data["Rating"]))
 
-    return (best_rated_movie, best_rating) if best_rated_movie else None
+    return best_rated_movies if best_rated_movies else []
 
 
-def get_worst_rated_movie(movies):
-    worst_rated_movie = None
+def get_worst_rated_movies(movies):
+    worst_rated_movies = []
     worst_rating = 10.0
 
     for movie, data in movies["Title"].items():
         if data["Rating"] < worst_rating:
+            worst_rated_movies = [(movie, data["Rating"])]
             worst_rating = data["Rating"]
-            worst_rated_movie = movie
+            continue
+        if data["Rating"] == worst_rating:
+            worst_rated_movies.append((movie, data["Rating"]))
 
-    return (worst_rated_movie, worst_rating) if worst_rated_movie else None
+    return worst_rated_movies if worst_rated_movies else []
 
 
 def get_random_movie(movies):
@@ -182,15 +187,26 @@ def ask_user_for_sequence():
             print(f"Bad input! Please enter '1' or '2'.")
 
 
-def display_movie_stats(average, median, best, worst):
+def display_movie_stats(average, median, best_movies, worst_movies):
     print(f"\n"
           f"----- Stats -----"
+
           f"\n"
           f"Average rating: {average}\n"
-          f"Median rating : {median}\n"
-          f"Best movie    : '{best[0]}', Rating: {best[1]}\n"
-          f"Worst movie   : '{worst[0]}', Rating: {worst[1]}"
+          f"Median rating : {median}"
           )
+    if len(best_movies) == 1:
+        print(f"Best movie    : '{best_movies[0][0]}', Rating: {best_movies[0][1]}")
+    else:
+        print(f"Best movies   : - '{best_movies[0][0]}', Rating: {best_movies[0][1]}")
+        for best_movie in best_movies[1:]:
+            print(f"                - '{best_movie[0]}', Rating: {best_movie[1]}")
+    if len(worst_movies) == 1:
+        print(f"Worst movie   : '{worst_movies[0][0]}', Rating: {worst_movies[0][1]}")
+    else:
+        print(f"Worst movies  : - '{worst_movies[0][0]}', Rating: {worst_movies[0][1]}")
+        for worst_movie in worst_movies[1:]:
+            print(f"                - '{worst_movie[0]}', Rating: {worst_movie[1]}")
 
 
 def display_found_movies(found_movies):
@@ -241,7 +257,7 @@ def get_start_year_from_user():
 def get_end_year_from_user():
     while True:
         try:
-            year = input("Enter start year or leave blank for no start year: ")
+            year = input("Enter end year or leave blank for no end year: ")
             if year == "":
                 return 9999
             valid_year = int(year)
@@ -260,7 +276,3 @@ def filter_movies(movies, min_rating, start_year, end_year):
         if data["Rating"] >= min_rating and start_year <= data["Year of release"] <= end_year:
             filtered_movies["Title"][title] = data
     return filtered_movies
-
-
-
-

@@ -1,5 +1,5 @@
 from functions import menu, print_title, print_menu, ask_for_valid_number, press_enter_to_continue, show_movies, \
-    get_average_rating, get_median_rating, get_best_rated_movie, get_worst_rated_movie, \
+    get_average_rating, get_median_rating, get_best_rated_movies, get_worst_rated_movies, \
     get_random_movie, find_movies, sort_movies_by_rating, get_title_from_user, \
     get_valid_rating_from_user, get_valid_year_from_user, sort_movies_by_year, ask_user_for_sequence, \
     display_movie_stats, display_found_movies, display_random_movie, get_minimum_rating_from_user, \
@@ -35,8 +35,8 @@ def main():
             press_enter_to_continue()
             continue
         elif user_choice == 5:
-            display_movie_stats(get_average_rating(movies), get_median_rating(movies), get_best_rated_movie(movies),
-                                get_worst_rated_movie(movies))
+            display_movie_stats(get_average_rating(movies), get_median_rating(movies), get_best_rated_movies(movies),
+                                get_worst_rated_movies(movies))
             press_enter_to_continue()
             continue
         elif user_choice == 6:
