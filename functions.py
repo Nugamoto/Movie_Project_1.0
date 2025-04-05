@@ -1,7 +1,41 @@
 import statistics
 from random import choice
 
-menu = ["Exit",
+__all__ = [
+    "menu",
+    "print_title",
+    "print_menu",
+    "ask_for_valid_number",
+    "press_enter_to_continue",
+    "show_movies",
+    "get_average_rating",
+    "get_median_rating",
+    "get_best_rated_movies",
+    "get_worst_rated_movies",
+    "get_random_movie",
+    "find_movies",
+    "sort_movies_by_rating",
+    "get_title_from_user",
+    "get_valid_year_from_user",
+    "get_valid_rating_from_user",
+    "sort_movies_by_year",
+    "ask_user_for_sequence",
+    "display_movie_stats",
+    "display_found_movies",
+    "display_random_movie",
+    "get_minimum_rating_from_user",
+    "get_start_year_from_user",
+    "get_end_year_from_user",
+    "filter_movies"
+]
+
+MIN_YEAR = 1000
+MAX_YEAR = 9999
+
+MIN_RATING = 0.0
+MAX_RATING = 10.0
+
+menu = ("Exit",
         "List movies",
         "Add movie",
         "Delete movie",
@@ -12,7 +46,7 @@ menu = ["Exit",
         "Movies sorted by rating",
         "Movies sorted by year",
         "Filter movies"
-        ]
+        )
 
 
 def print_title(title: str):
@@ -64,7 +98,6 @@ def press_enter_to_continue():
         bool: Always returns None.
     """
     input("\nPress enter to continue: ")
-    return None
 
 
 def show_movies(movies):
@@ -74,7 +107,7 @@ def show_movies(movies):
     Args:
         movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
     """
-    if movies["Title"] == {}:
+    if not movies["Title"]:
         print("No movies found!")
     else:
         print(f"\n----- Total of {len(movies["Title"])} movies -----")
@@ -94,7 +127,7 @@ def get_median_rating(movies):
 
 def get_best_rated_movies(movies):
     best_rated_movies = []
-    best_rating = 0.0
+    best_rating = MIN_RATING
 
     for movie, data in movies["Title"].items():
         if data["Rating"] > best_rating:
@@ -109,7 +142,7 @@ def get_best_rated_movies(movies):
 
 def get_worst_rated_movies(movies):
     worst_rated_movies = []
-    worst_rating = 10.0
+    worst_rating = MAX_RATING
 
     for movie, data in movies["Title"].items():
         if data["Rating"] < worst_rating:
@@ -150,7 +183,7 @@ def get_valid_year_from_user():
     while True:
         try:
             year = int(input("Enter year of release: "))
-            if 1000 <= year <= 9999:
+            if MIN_YEAR <= year <= MAX_YEAR:
                 break
             print("Invalid year. Please enter a 4-digit year!")
         except ValueError:
@@ -162,7 +195,7 @@ def get_valid_rating_from_user():
     while True:
         try:
             rating = round(float(input("Enter new movie rating (0-10): ")), 1)
-            if 0 <= rating <= 10:
+            if MIN_RATING <= rating <= MAX_RATING:
                 break
             print(f"Rating {rating} is invalid. Please try again!")
         except ValueError:
@@ -228,10 +261,10 @@ def get_minimum_rating_from_user():
     while True:
         try:
             rating = input("Enter minimum rating (0-10) or leave blank for no minimum rating: ")
-            if rating == "":
-                return 0
+            if not rating:
+                return MIN_RATING
             valid_rating = round(float(rating), 1)
-            if 0 <= valid_rating <= 10:
+            if MIN_RATING <= valid_rating <= MAX_RATING:
                 break
             print(f"Rating {valid_rating} is invalid. Please try again!")
         except ValueError:
@@ -244,9 +277,9 @@ def get_start_year_from_user():
         try:
             year = input("Enter start year or leave blank for no start year: ")
             if year == "":
-                return 1000
+                return MIN_YEAR
             valid_year = int(year)
-            if 1000 <= valid_year <= 9999:
+            if MIN_YEAR <= valid_year <= MAX_YEAR:
                 break
             print(f"Year {valid_year} is invalid. Please enter a 4-digit year!")
         except ValueError:
@@ -259,9 +292,9 @@ def get_end_year_from_user():
         try:
             year = input("Enter end year or leave blank for no end year: ")
             if year == "":
-                return 9999
+                return MAX_YEAR
             valid_year = int(year)
-            if 1000 <= valid_year <= 9999:
+            if MIN_YEAR <= valid_year <= MAX_YEAR:
                 break
             print(f"Year {valid_year} is invalid. Please enter a 4-digit year!")
         except ValueError:

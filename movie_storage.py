@@ -2,8 +2,11 @@ import json
 
 
 def get_movies():
-    with open("data.json", "r") as content:
-        return json.loads(content.read())
+    try:
+        with open("data.json", "r") as content:
+            return json.loads(content.read())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"Title": {}}
 
 
 def save_movies(movies):
@@ -11,69 +14,31 @@ def save_movies(movies):
         content.write(json.dumps(movies))
 
 
-def add_movie(title, year, rating):
-    with open("data.json", "r") as content:
-        movies = json.loads(content.read())
+def add_movie(title, rating, year):
+    movies = get_movies()
 
-    if title not in movies["Title"]:
-        while True:
-            try:
-                if 0 <= rating <= 10:
-                    break
-                print(f"Rating {rating} is invalid. Please try again!")
-            except ValueError:
-                print("Invalid input. Please enter a valid number!")
+    movies["Title"][title] = {"Rating": float(round(rating, 1)), "Year of release": year}
 
-        while True:
-            try:
-                if 1000 <= year <= 9999:
-                    break
-                print("Invalid year. Please enter a 4-digit year!")
-            except ValueError:
-                print("Invalid input. Please enter a valid 4-digit year!")
+    print(f"\nMovie '{title}' (Rating: {rating}, Year: {year}) successfully added")
 
-        print(
-            f"\nMovie '{title}' (Rating: {rating}, Year: {year}) successfully added"
-        )
-        movies["Title"][title] = {"Rating": float(round(rating, 1)), "Year of release": year}
-    else:
-        print(f"\n'{title}' already exists.")
-
-    with open("data.json", "w") as content:
-        content.write(json.dumps(movies))
+    save_movies(movies)
 
 
 def delete_movie(title):
-    with open("data.json", "r") as content:
-        movies = json.loads(content.read())
+    movies = get_movies()
 
-    if title in movies["Title"]:
-        print(f"\nMovie '{title}' successfully deleted")
-        del movies["Title"][title]
-    else:
-        print(f"\nMovie '{title}' doesn't exist!")
+    del movies["Title"][title]
 
-    with open("data.json", "w") as content:
-        content.write(json.dumps(movies))
+    print(f"\nMovie '{title}' successfully deleted")
+
+    save_movies(movies)
 
 
 def update_movie(title, rating):
-    with open("data.json", "r") as content:
-        movies = json.loads(content.read())
+    movies = get_movies()
 
-    if title not in movies["Title"]:
-        print(f"\nMovie '{title}' doesn't exist!")
-    else:
-        while True:
-            try:
-                if 0 <= rating <= 10:
-                    break
-                print(f"Rating {rating} is invalid. Please try again!")
-            except ValueError:
-                print("Invalid input. Please enter a valid number!")
+    movies["Title"][title]["Rating"] = float(round(rating, 1))
 
-        print(f"\nMovie '{title}' successfully updated")
-        movies["Title"][title]["Rating"] = float(round(rating, 1))
+    print(f"\nMovie '{title}' successfully updated")
 
-    with open("data.json", "w") as content:
-        content.write(json.dumps(movies))
+    save_movies(movies)
