@@ -50,22 +50,10 @@ menu = ("Exit",
 
 
 def print_title(title: str):
-    """
-    Prints a formatted title.
-
-    Args:
-        title (str): The title to be printed.
-    """
     print(f"\n********** {title} **********")
 
 
 def print_menu(menu_list):
-    """
-    Prints a menu with numbered options.
-
-    Args:
-        menu_list (list): A list of menu options.
-    """
     print("\nMenu:")
     for number, element in enumerate(menu_list):
         print(f"{number}. {element}")
@@ -73,12 +61,6 @@ def print_menu(menu_list):
 
 
 def ask_for_valid_number(menu_list):
-    """
-    Prompts the user to enter a number between 0 and len(menu_list).
-
-    Returns:
-        int: The number entered by the user if valid.
-    """
     final_digit = len(menu_list) - 1
     while True:
         try:
@@ -91,37 +73,25 @@ def ask_for_valid_number(menu_list):
 
 
 def press_enter_to_continue():
-    """
-    Prompts the user to press Enter to continue.
-
-    Returns:
-        bool: Always returns None.
-    """
     input("\nPress enter to continue: ")
 
 
 def show_movies(movies):
-    """
-    Displays all movies, their ratings and years of release.
-
-    Args:
-        movies (dict[str, dict]): A dictionary containing movies as keys and their ratings as values.
-    """
-    if not movies["Title"]:
+    if not movies:
         print("No movies found!")
     else:
-        print(f"\n----- Total of {len(movies["Title"])} movies -----")
-        for title, data in movies["Title"].items():
-            print(f"'{title}'\n\tRating: {float(data["Rating"])} | Year: {data["Year of release"]} ")
+        print(f"\n----- Total of {len(movies)} movies -----")
+        for title, data in movies.items():
+            print(f"'{title}'\n\tRating: {float(data['Rating'])} | Year: {data['Year of release']} ")
 
 
 def get_average_rating(movies):
-    ratings = [details["Rating"] for details in movies["Title"].values()]
+    ratings = [details["Rating"] for details in movies.values()]
     return round(sum(ratings) / len(ratings), 1) if ratings else None
 
 
 def get_median_rating(movies):
-    ratings = sorted([details["Rating"] for details in movies["Title"].values()])
+    ratings = sorted([details["Rating"] for details in movies.values()])
     return round(statistics.median(ratings), 1) if ratings else None
 
 
@@ -129,7 +99,7 @@ def get_best_rated_movies(movies):
     best_rated_movies = []
     best_rating = MIN_RATING
 
-    for movie, data in movies["Title"].items():
+    for movie, data in movies.items():
         if data["Rating"] > best_rating:
             best_rated_movies = [(movie, data["Rating"])]
             best_rating = data["Rating"]
@@ -144,7 +114,7 @@ def get_worst_rated_movies(movies):
     worst_rated_movies = []
     worst_rating = MAX_RATING
 
-    for movie, data in movies["Title"].items():
+    for movie, data in movies.items():
         if data["Rating"] < worst_rating:
             worst_rated_movies = [(movie, data["Rating"])]
             worst_rating = data["Rating"]
@@ -156,23 +126,23 @@ def get_worst_rated_movies(movies):
 
 
 def get_random_movie(movies):
-    random_movie_name = (choice(list(movies["Title"])))
-    random_movie_data = movies["Title"][random_movie_name]
+    random_movie_name = choice(list(movies))
+    random_movie_data = movies[random_movie_name]
     return random_movie_name, random_movie_data
 
 
 def find_movies(movies):
     part_of_movie_name = input("Enter part of movie name: ")
-    found_items = {"Title": {}}
-    for title, data in movies["Title"].items():
+    found_items = {}
+    for title, data in movies.items():
         if part_of_movie_name.lower() in title.lower():
-            found_items["Title"][title] = data
+            found_items[title] = data
     return found_items
 
 
 def sort_movies_by_rating(movies, order):
-    sorted_movies = dict(sorted(movies["Title"].items(), key=lambda item: item[1]["Rating"], reverse=order))
-    return {"Title": sorted_movies}
+    sorted_movies = dict(sorted(movies.items(), key=lambda item: item[1]["Rating"], reverse=order))
+    return sorted_movies
 
 
 def get_title_from_user():
@@ -204,8 +174,8 @@ def get_valid_rating_from_user():
 
 
 def sort_movies_by_year(movies, order):
-    sorted_movies = dict(sorted(movies["Title"].items(), key=lambda item: item[1]["Year of release"], reverse=order))
-    return {"Title": sorted_movies}
+    sorted_movies = dict(sorted(movies.items(), key=lambda item: item[1]["Year of release"], reverse=order))
+    return sorted_movies
 
 
 def ask_user_for_sequence():
@@ -223,11 +193,9 @@ def ask_user_for_sequence():
 def display_movie_stats(average, median, best_movies, worst_movies):
     print(f"\n"
           f"----- Stats -----"
-
           f"\n"
           f"Average rating: {average}\n"
-          f"Median rating : {median}"
-          )
+          f"Median rating : {median}")
     if len(best_movies) == 1:
         print(f"Best movie    : '{best_movies[0][0]}', Rating: {best_movies[0][1]}")
     else:
@@ -244,7 +212,7 @@ def display_movie_stats(average, median, best_movies, worst_movies):
 
 def display_found_movies(found_movies):
     print("\n")
-    if found_movies["Title"] == {}:
+    if not found_movies:
         print(f"No movie found.")
     else:
         show_movies(found_movies)
@@ -253,8 +221,8 @@ def display_found_movies(found_movies):
 def display_random_movie(random_movie):
     print(f"\n"
           f"Your movie for tonight:\n"
-          f"'{random_movie[0]}'\nIt's rated {float(random_movie[1]["Rating"])} "
-          f"and released {random_movie[1]["Year of release"]}.")
+          f"'{random_movie[0]}'\nIt's rated {float(random_movie[1]['Rating'])} "
+          f"and released {random_movie[1]['Year of release']}.")
 
 
 def get_minimum_rating_from_user():
@@ -304,8 +272,8 @@ def get_end_year_from_user():
 
 def filter_movies(movies, min_rating, start_year, end_year):
     movies_by_rating = sort_movies_by_rating(movies, True)
-    filtered_movies = {"Title": {}}
-    for title, data in movies_by_rating["Title"].items():
+    filtered_movies = {}
+    for title, data in movies_by_rating.items():
         if data["Rating"] >= min_rating and start_year <= data["Year of release"] <= end_year:
-            filtered_movies["Title"][title] = data
+            filtered_movies[title] = data
     return filtered_movies

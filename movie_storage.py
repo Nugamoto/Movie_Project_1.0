@@ -6,7 +6,7 @@ def get_movies():
         with open("data.json", "r") as content:
             return json.loads(content.read())
     except (FileNotFoundError, json.JSONDecodeError):
-        return {"Title": {}}
+        return {}
 
 
 def save_movies(movies):
@@ -17,28 +17,32 @@ def save_movies(movies):
 def add_movie(title, rating, year):
     movies = get_movies()
 
-    movies["Title"][title] = {"Rating": float(round(rating, 1)), "Year of release": year}
+    movies[title] = {
+        "Rating": float(round(rating, 1)),
+        "Year of release": year
+    }
 
     print(f"\nMovie '{title}' (Rating: {rating}, Year: {year}) successfully added")
-
     save_movies(movies)
 
 
 def delete_movie(title):
     movies = get_movies()
 
-    del movies["Title"][title]
-
-    print(f"\nMovie '{title}' successfully deleted")
-
-    save_movies(movies)
+    if title in movies:
+        del movies[title]
+        print(f"\nMovie '{title}' successfully deleted")
+        save_movies(movies)
+    else:
+        print(f"\nMovie '{title}' does not exist!")
 
 
 def update_movie(title, rating):
     movies = get_movies()
 
-    movies["Title"][title]["Rating"] = float(round(rating, 1))
-
-    print(f"\nMovie '{title}' successfully updated")
-
-    save_movies(movies)
+    if title in movies:
+        movies[title]["Rating"] = float(round(rating, 1))
+        print(f"\nMovie '{title}' successfully updated")
+        save_movies(movies)
+    else:
+        print(f"\nMovie '{title}' does not exist!")

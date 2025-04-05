@@ -21,7 +21,7 @@ def main():
 
             case 2:
                 new_movie_title = get_title_from_user()
-                if new_movie_title not in movies["Title"]:
+                if new_movie_title not in movies:
                     new_movie_rating = get_valid_rating_from_user()
                     new_movie_year = get_valid_year_from_user()
                     add_movie(new_movie_title, new_movie_rating, new_movie_year)
@@ -31,7 +31,7 @@ def main():
 
             case 3:
                 movie_to_delete = get_title_from_user()
-                if movie_to_delete in movies["Title"]:
+                if movie_to_delete in movies:
                     delete_movie(movie_to_delete)
                 else:
                     print(f"\nMovie '{movie_to_delete}' doesn't exist!")
@@ -39,7 +39,7 @@ def main():
 
             case 4:
                 movie_name = get_title_from_user()
-                if movie_name in movies["Title"]:
+                if movie_name in movies:
                     new_movie_rating = get_valid_rating_from_user()
                     update_movie(movie_name, new_movie_rating)
                 else:
